@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -61,11 +62,17 @@ namespace Mvc.Client
                 CallbackPath = new PathString("/callback"),
 				Events = new OAuthEvents
                 {
-                    OnCreatingTicket = async context => { await CreateAuthTicket(context); }
+                    OnCreatingTicket = async context => { await CreateAuthTicket(context); },
+
+					OnRemoteFailure = context => {
+						context.Response.Redirect("/?err=" + UrlEncoder.Default.Encode(context.Failure.Message)); 
+                        context.HandleResponse();
+						return Task.FromResult(0);
+					}
                 }
             });
           
-
+                
 
 
             app.UseMvc();

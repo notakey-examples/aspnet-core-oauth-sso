@@ -1,6 +1,12 @@
 ﻿@model string
 
 <div class="jumbotron">
+	@if (!String.IsNullOrEmpty(Context.Request.Query["err"])){
+        <div class="alert alert-danger">
+          @Context.Request.Query["err"]
+        </div>
+	}
+	
     @if (User?.Identity?.IsAuthenticated ?? false) {
         <h1>Welcome, @User.Identity.Name</h1>
 
