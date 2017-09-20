@@ -2,7 +2,7 @@
 
 ## Running 
 
-Run the application using `dotnet run` in project root or use Visual Studio.
+Run the application using `dotnet run --framework netcoreapp1.0` in project root or use Visual Studio.
 
 ## Requirements
 

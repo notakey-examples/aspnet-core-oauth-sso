@@ -16,10 +16,7 @@ namespace Mvc.Client.Controllers
         [HttpGet("~/signin")]
         public IActionResult SignIn() => View("SignIn", HttpContext.GetExternalProviders());
 
-		[HttpGet("~/callback")]
-		public IActionResult Callback() => View("Callback");
-
-
+		
 		[HttpPost("~/signin")]
         public IActionResult SignIn([FromForm] string provider)
         {
