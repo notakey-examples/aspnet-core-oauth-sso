@@ -6,7 +6,7 @@
 
         <p>
             @foreach (var claim in Context.User.Claims) {
-                <div>@claim.Type: <b>@claim.Value</b></div>
+                <div> @claim.Type: <br /> <b> @claim.Value </b></div>
             }
         </p>
         
