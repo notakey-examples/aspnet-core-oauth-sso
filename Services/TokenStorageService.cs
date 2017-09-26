@@ -53,9 +53,7 @@ namespace Mvc.Client
         public void saveExpirationTime(TimeSpan exp)
 		{
             DateTimeOffset dt = DateTime.Now.Add(exp);
-            Console.WriteLine("TokenStorageService DateTimeOffset: " + dt.ToString());
             Int32 ts = (Int32)dt.ToUnixTimeSeconds();
-			Console.WriteLine("TokenStorageService ToUnixTimeSeconds: " + ts);
             _httpContextAccessor.HttpContext.Session.SetInt32("expirationTime", ts);
 		}
 
