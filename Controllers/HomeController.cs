@@ -5,12 +5,13 @@
  */
 
 using Microsoft.AspNetCore.Mvc;
+using Mvc.Client.Extensions;
 
 namespace Mvc.Client.Controllers
 {
     public class HomeController : Controller
     {
         [HttpGet("~/")]
-        public ActionResult Index() => View();
+        public ActionResult Index() => View("Index");
     }
 }

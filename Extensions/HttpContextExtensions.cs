@@ -14,6 +14,23 @@ namespace Mvc.Client.Extensions
 {
     public static class HttpContextExtensions
     {
+
+		public static IEnumerable<KeyValuePair<string, string>> GetTokens(this HttpContext context)
+		{
+			if (context == null)
+			{
+				throw new ArgumentNullException(nameof(context));
+			}
+
+            IEnumerable<KeyValuePair<string, string>> tokens = Enumerable.Empty<KeyValuePair<string, string>>();
+
+            //if(!String.IsNullOrEmpty(context.RefreshToken){
+            //    tokens.Append(new KeyValuePair<string, string>("RefreshToken", context.RefreshToken);
+            //}
+		  
+           return tokens;
+		}
+
         public static IEnumerable<AuthenticationDescription> GetExternalProviders(this HttpContext context)
         {
             if (context == null)

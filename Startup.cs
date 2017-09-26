@@ -17,37 +17,63 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Mvc.Client.Interfaces;
+using Mvc.Client.Models;
 
 
 namespace Mvc.Client
 {
     public class Startup
     {
-        
-        public void ConfigureServices(IServiceCollection services)
+
+		public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             });
 
-            services.AddMvc();
-        }
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-        public void Configure(IApplicationBuilder app)
+            services.AddMvc();
+
+            services.AddDistributedMemoryCache();
+
+			services.AddSession(options =>
+                {
+                    // Set a short timeout for easy testing.
+                    options.IdleTimeout = TimeSpan.FromSeconds(3600);
+                    options.CookieHttpOnly = true;
+                    options.CookieName = "LocalSessionCookie";
+                }
+            );
+			
+            services.AddTransient<ITokenStorageService, TokenStorageService>();
+            services.AddTransient<TokenStorageService>();
+
+		}
+
+        public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider , ITokenStorageService tsp, IHttpContextAccessor httpContextAccessor)
         {
             app.UseStaticFiles();
+
+            app.UseSession();
 
 			app.UseCookieAuthentication(new CookieAuthenticationOptions
 			{
 				AutomaticAuthenticate = true,
 				AutomaticChallenge = true,
+                CookieName = "LocalAuthCookie",
 				LoginPath = new PathString("/signin"),
 				LogoutPath = new PathString("/signout")
 			});
 
+
+            //var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+                                                     
             app.UseOAuthAuthentication(new OAuthOptions
             {
                 DisplayName = "NotakeySSO",
@@ -62,7 +88,7 @@ namespace Mvc.Client
                 CallbackPath = new PathString("/callback"),
 				Events = new OAuthEvents
                 {
-                    OnCreatingTicket = async context => { await CreateAuthTicket(context); },
+                    OnCreatingTicket = async context => { await CreateAuthTicket(context, tsp, httpContextAccessor); },
 
 					OnRemoteFailure = context => {
 						context.Response.Redirect("/?err=" + UrlEncoder.Default.Encode(context.Failure.Message)); 
@@ -71,15 +97,12 @@ namespace Mvc.Client
 					}
                 }
             });
-          
-                
-
 
             app.UseMvc();
 
         }
 
-		private static async Task CreateAuthTicket(OAuthCreatingTicketContext context)
+        private async Task CreateAuthTicket(OAuthCreatingTicketContext context, ITokenStorageService tsp, IHttpContextAccessor htc)
 		{
 			// Get the User info using the bearer token
 			var request = new HttpRequestMessage()
@@ -97,7 +120,7 @@ namespace Mvc.Client
 			var converter = new ExpandoObjectConverter();
 			dynamic user = JsonConvert.DeserializeObject<ExpandoObject>(await response.Content.ReadAsStringAsync(), converter);
 
-            Console.WriteLine("Added username");
+            Console.WriteLine("Added username: " + user.username);
             context.Identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, user.username));
 
 
@@ -132,6 +155,21 @@ namespace Mvc.Client
 			{
                     Console.WriteLine(ex.Message);
 			}
+
+            tsp.saveRefreshToken(context.RefreshToken);
+            tsp.saveAccessToken(context.AccessToken);
+            tsp.saveExpirationTime((TimeSpan)context.ExpiresIn);
+
+
+			//var dateFirstSeen = DateTime.Now;
+			//var serialisedDate = JsonConvert.SerializeObject(dateFirstSeen);
+			////AppContext.Session.SetString("RefreshToken", context.RefreshToken);
+
+			////RefreshToken = context.RefreshToken;
+			////TokenType = context.TokenType;
+			//ExpiresIn = (TimeSpan)context.ExpiresIn;
+			//AccessToken = context.AccessToken;
+
 		}
 
     }

@@ -8,11 +8,19 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Mvc.Client.Extensions;
+using Mvc.Client.Interfaces;
+using Mvc.Client.Models;
 
 namespace Mvc.Client.Controllers
 {
     public class AuthenticationController : Controller
     {
+        ITokenStorageService _tss; 
+
+        public AuthenticationController(ITokenStorageService tss){
+            _tss = tss;
+        }
+
         [HttpGet("~/signin")]
         public IActionResult SignIn() => View("SignIn", HttpContext.GetExternalProviders());
 
