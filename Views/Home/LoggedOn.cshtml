@@ -16,7 +16,7 @@
         <h2>Claims</h2>
         <p>
             @foreach (var claim in Context.User.Claims) {
-                <div> @claim.Type.Replace("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/", "").: <b> @claim.Value </b></div>
+                <div> @claim.Type.Replace("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/", "").Replace("http://schemas.microsoft.com/ws/2008/06/identity/claims/", ""): <b> @claim.Value </b></div>
             }
         </p>
 

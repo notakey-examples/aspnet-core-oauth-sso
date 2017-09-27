@@ -148,6 +148,15 @@ namespace Mvc.Client
 					{
                         context.Identity.AddClaim(new Claim(ClaimTypes.MobilePhone, (string)attr[0]));
 					}
+					if (u.Key == "guid")
+					{
+                        context.Identity.AddClaim(new Claim(ClaimTypes.Sid, (string)attr[0]));
+					}
+					if (u.Key == "authId")
+					{
+						context.Identity.AddClaim(new Claim("auth-id", (string)attr[0]));
+					}
+
                 }
             }
 			catch (Exception ex)
