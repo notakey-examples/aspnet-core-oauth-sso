@@ -5,8 +5,6 @@
  */
 
 using System;
-using Mvc.Client.Models;
-using Mvc.Client.Interfaces;
 
 namespace Mvc.Client.Interfaces
 {

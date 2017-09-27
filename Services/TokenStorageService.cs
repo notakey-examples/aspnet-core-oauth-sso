@@ -7,7 +7,6 @@
 using System;
 using Microsoft.AspNetCore.Http;
 using Mvc.Client.Interfaces;
-using Mvc.Client.Models;
 
 namespace Mvc.Client
 {

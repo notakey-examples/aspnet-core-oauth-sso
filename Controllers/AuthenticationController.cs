@@ -4,22 +4,17 @@
  * for more information concerning the license and the contributors participating to this project.
  */
 
+using System;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Mvc.Client.Extensions;
 using Mvc.Client.Interfaces;
-using Mvc.Client.Models;
 
 namespace Mvc.Client.Controllers
 {
     public class AuthenticationController : Controller
     {
-        ITokenStorageService _tss; 
-
-        public AuthenticationController(ITokenStorageService tss){
-            _tss = tss;
-        }
 
         [HttpGet("~/signin")]
         public IActionResult SignIn() => View("SignIn", HttpContext.GetExternalProviders());
@@ -40,19 +35,40 @@ namespace Mvc.Client.Controllers
                 return BadRequest();
             }
 
-            // Instruct the middleware corresponding to the requested external identity
-            // provider to redirect the user agent to its own authorization endpoint.
-            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-            return Challenge(new AuthenticationProperties { RedirectUri = "/" }, provider);
+			// Instruct the middleware corresponding to the requested external identity
+			// provider to redirect the user agent to its own authorization endpoint.
+			// Note: the authenticationScheme parameter must match the value configured in Startup.cs
+			// Note: RedirectUri instructs Oauth middleware to return to configured location 
+			return Challenge(new AuthenticationProperties { RedirectUri = "/loggedon" }, provider);
         }
 
-        [HttpGet("~/signout"), HttpPost("~/signout")]
-        public IActionResult SignOut()
+        [HttpGet("~/completesignout")]
+        public IActionResult CompleteSignOut()
         {
-            // Instruct the cookies middleware to delete the local cookie created
-            // when the user agent is redirected from the external identity provider
-            // after a successful authentication flow (e.g Google or Facebook).
-            return SignOut(new AuthenticationProperties { RedirectUri = "/" },
+
+			if (!User.Identity.IsAuthenticated)
+			{
+				return Redirect("/loggedoff");
+			}
+
+			// Just to check if local session really is destroyed
+			
+		    return Redirect("/");
+            
+        }
+
+        [HttpPost("~/initsignout"), HttpGet("~/initsignout")]
+        public IActionResult InitSignOut()
+        {
+			// Initiate remote logout procedure on SSO IdP 
+			// RelayState URLs have to be registered with SSO 
+			// application to prevent scripted session destruction
+
+			// This instructs the cookies auth middleware to delete the local cookie 
+			// and redirect user agent to external external identity provider 
+
+
+			return SignOut(new AuthenticationProperties { RedirectUri = "https://sso.demo.notakey.com/sso/saml2/idp/initSLO.php?RelayState=http://" + HttpContext.Request.Host + "/completesignout" },
                 CookieAuthenticationDefaults.AuthenticationScheme);
         }
     }

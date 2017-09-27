@@ -8,8 +8,6 @@
     @foreach (var description in Model) {
         <form action="/signin" method="post">
             <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
-            <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
-
             <button class="btn btn-lg btn-success" type="submit">@description.DisplayName</button>
         </form>
     }

@@ -1,0 +1,12 @@
+﻿@model string
+
+<div class="jumbotron">
+	@if (!String.IsNullOrEmpty(Context.Request.Query["err"])){
+        <div class="alert alert-danger">
+          @Context.Request.Query["err"]
+        </div>
+	}
+
+    <h2>You have been successfully logged out!</h2>
+   
+</div>

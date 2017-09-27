@@ -12,30 +12,13 @@
 	
     @if (User?.Identity?.IsAuthenticated ?? false) {
         <h1>Welcome, @User.Identity.Name</h1>
-        <h2>Claims</h2>
-        <p>
-            @foreach (var claim in Context.User.Claims) {
-                <div> @claim.Type.Replace("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/", "").: <b> @claim.Value </b></div>
-            }
-        </p>
-
-	    <h2>Tokens</h2>
-	    <p>
-         <div>Access token: <br />
-        	<textarea rows="4" cols="50">@TokenService.getAccessToken()</textarea>
-	     </div>
-	     <div>Refresh Token: <br /> 
-		    <textarea rows="4" cols="50">@TokenService.getRefreshToken()</textarea>
-	     </div>
-	     <div>Expires:
-            @TokenService.getExpirationTime() UTC
-		 </div>
-	    </p>
-        <a class="btn btn-lg btn-danger" href="/signout?returnUrl=%2F">Sign out</a>
+        <form action="/initsignout" method="post">
+            <button class="btn btn-lg btn-danger" type="submit">Sign out</button>
+		</form>
     }
 
     else {
         <h1>Welcome, anonymous</h1>
-        <a class="btn btn-lg btn-success" href="/signin?returnUrl=%2F">Sign in</a>
+        <a class="btn btn-lg btn-success" href="/signin">Sign in</a>
     }
 </div>

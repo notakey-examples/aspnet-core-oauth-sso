@@ -1,0 +1,44 @@
+﻿@model string
+@using Mvc.Client.Interfaces
+@using Mvc.Client
+@inject TokenStorageService TokenService
+
+<div class="jumbotron">
+	@if (!String.IsNullOrEmpty(Context.Request.Query["err"])){
+        <div class="alert alert-danger">
+          @Context.Request.Query["err"]
+        </div>
+	}
+	
+    @if (User?.Identity?.IsAuthenticated ?? false) {
+        <h1>Login successful</h1>
+	    <p>You have just logged on as @User.Identity.Name</p>
+        <h2>Claims</h2>
+        <p>
+            @foreach (var claim in Context.User.Claims) {
+                <div> @claim.Type.Replace("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/", "").: <b> @claim.Value </b></div>
+            }
+        </p>
+
+	    <h2>Tokens</h2>
+	    <p>
+         <div>Access token: <br />
+        	<textarea rows="4" cols="50">@TokenService.getAccessToken()</textarea>
+	     </div>
+	     <div>Refresh Token: <br /> 
+		    <textarea rows="4" cols="50">@TokenService.getRefreshToken()</textarea>
+	     </div>
+	     <div>Expires:
+            @TokenService.getExpirationTime() UTC
+		 </div>
+	    </p>
+         <form action="/initsignout" method="post">
+            <button class="btn btn-lg btn-danger" type="submit">Sign out</button>
+        </form>
+    }
+
+    else {
+        <h1>Welcome, anonymous</h1>
+        <a class="btn btn-lg btn-success" href="/signin">Sign in</a>
+    }
+</div>

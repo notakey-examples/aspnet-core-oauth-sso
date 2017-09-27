@@ -17,11 +17,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Mvc.Client.Interfaces;
-using Mvc.Client.Models;
 
 
 namespace Mvc.Client
@@ -68,13 +66,14 @@ namespace Mvc.Client
 				AutomaticChallenge = true,
                 CookieName = "LocalAuthCookie",
 				LoginPath = new PathString("/signin"),
-				LogoutPath = new PathString("/signout")
+                AccessDeniedPath = new PathString("/?err=Access%20denied"),
+				LogoutPath = new PathString("/initsignout")
 			});
 
 
-            //var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
-                                                     
-            app.UseOAuthAuthentication(new OAuthOptions
+			//var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+			//SLO link https://sso.demo.notakey.com/sso/saml2/idp/initSLO.php?RelayState=http://localhost:5000/                                         
+			app.UseOAuthAuthentication(new OAuthOptions
             {
                 DisplayName = "NotakeySSO",
                 SaveTokens = true,

@@ -13,5 +13,16 @@ namespace Mvc.Client.Controllers
     {
         [HttpGet("~/")]
         public ActionResult Index() => View("Index");
+
+		[HttpGet("~/loggedon")]
+		public ActionResult LoggedOn() => View("LoggedOn");
+
+		[HttpGet("~/loggedoff")]
+        public ActionResult LoggedOff(){
+            if(User.Identity.IsAuthenticated){
+               Redirect("/");
+            }
+            return View("LoggedOff");
+        } 
     }
 }
