@@ -12,9 +12,7 @@
 	
     @if (User?.Identity?.IsAuthenticated ?? false) {
         <h1>Welcome, @User.Identity.Name</h1>
-        <form action="/initsignout" method="post">
-            <button class="btn btn-lg btn-danger" type="submit">Sign out</button>
-		</form>
+	    <a class="btn btn-lg btn-danger" href="/signout">Sign out</a>
     }
 
     else {

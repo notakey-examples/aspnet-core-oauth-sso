@@ -57,19 +57,24 @@ namespace Mvc.Client.Controllers
             
         }
 
-        [HttpPost("~/initsignout"), HttpGet("~/initsignout")]
-        public IActionResult InitSignOut()
+        [HttpPost("~/signout"), HttpGet("~/signout")]
+        public IActionResult SignOut()
         {
-			// Initiate remote logout procedure on SSO IdP 
-			// RelayState URLs have to be registered with SSO 
-			// application to prevent scripted session destruction
+            // Initiate remote logout procedure on SSO IdP 
+            // RelayState URLs have to be registered with SSO 
+            // application to prevent scripted session destruction
 
-			// This instructs the cookies auth middleware to delete the local cookie 
-			// and redirect user agent to external external identity provider 
+            // This instructs the cookies auth middleware to delete the local cookie 
+            // and redirect user agent to external external identity provider 
 
+            HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                   
+            return Redirect("https://sso.demo.notakey.com/sso/saml2/idp/initSLO.php?RelayState=http://" + HttpContext.Request.Host + "/completesignout");
+			
+            // The Controllerbase.SignOut is broken and will not redirect 
+			//return SignOut(new AuthenticationProperties { RedirectUri = "/" },
+			//CookieAuthenticationDefaults.AuthenticationScheme );
 
-			return SignOut(new AuthenticationProperties { RedirectUri = "https://sso.demo.notakey.com/sso/saml2/idp/initSLO.php?RelayState=http://" + HttpContext.Request.Host + "/completesignout" },
-                CookieAuthenticationDefaults.AuthenticationScheme);
-        }
+		}
     }
 }

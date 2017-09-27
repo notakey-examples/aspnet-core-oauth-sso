@@ -67,7 +67,7 @@ namespace Mvc.Client
                 CookieName = "LocalAuthCookie",
 				LoginPath = new PathString("/signin"),
                 AccessDeniedPath = new PathString("/?err=Access%20denied"),
-				LogoutPath = new PathString("/initsignout")
+				LogoutPath = new PathString("/signout")
 			});
 
 
