@@ -48,7 +48,7 @@ namespace Mvc.Client
                     options.CookieName = "LocalSessionCookie";
                 }
             );
-			
+
             services.AddTransient<ITokenStorageService, TokenStorageService>();
             services.AddTransient<TokenStorageService>();
 
@@ -72,15 +72,15 @@ namespace Mvc.Client
 
 
 			//var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
-			//SLO link https://sso.demo.notakey.com/sso/saml2/idp/initSLO.php?RelayState=http://localhost:5000/                                         
+			//SLO link https://sso.demo.notakey.com/sso/saml2/idp/initSLO?RelayState=http://localhost:5000/
 			app.UseOAuthAuthentication(new OAuthOptions
             {
                 DisplayName = "NotakeySSO",
                 SaveTokens = true,
                 AuthenticationScheme = "Application",
-                AuthorizationEndpoint = "https://sso.demo.notakey.com/sso/module.php/oauth2/authorize.php",
-                TokenEndpoint = "https://sso.demo.notakey.com/sso/module.php/oauth2/access_token.php",
-                UserInformationEndpoint = "https://sso.demo.notakey.com/sso/module.php/oauth2/userinfo.php",
+                AuthorizationEndpoint = "https://sso.demo.notakey.com/sso/module/oauth2/authorize",
+                TokenEndpoint = "https://sso.demo.notakey.com/sso/module/oauth2/access_token",
+                UserInformationEndpoint = "https://sso.demo.notakey.com/sso/module/oauth2/userinfo",
                 ClientId = "_62e84e38c015008ae22ca1d11a616c48d72e4b7a9c",
                 ClientSecret = "_177efa03b58eaa75001a595930217fd8a12e049509",
                 Scope = { "basic" },
@@ -90,7 +90,7 @@ namespace Mvc.Client
                     OnCreatingTicket = async context => { await CreateAuthTicket(context, tsp, httpContextAccessor); },
 
 					OnRemoteFailure = context => {
-						context.Response.Redirect("/?err=" + UrlEncoder.Default.Encode(context.Failure.Message)); 
+						context.Response.Redirect("/?err=" + UrlEncoder.Default.Encode(context.Failure.Message));
                         context.HandleResponse();
 						return Task.FromResult(0);
 					}

@@ -19,7 +19,7 @@ namespace Mvc.Client.Controllers
         [HttpGet("~/signin")]
         public IActionResult SignIn() => View("SignIn", HttpContext.GetExternalProviders());
 
-		
+
 		[HttpPost("~/signin")]
         public IActionResult SignIn([FromForm] string provider)
         {
@@ -38,7 +38,7 @@ namespace Mvc.Client.Controllers
 			// Instruct the middleware corresponding to the requested external identity
 			// provider to redirect the user agent to its own authorization endpoint.
 			// Note: the authenticationScheme parameter must match the value configured in Startup.cs
-			// Note: RedirectUri instructs Oauth middleware to return to configured location 
+			// Note: RedirectUri instructs Oauth middleware to return to configured location
 			return Challenge(new AuthenticationProperties { RedirectUri = "/loggedon" }, provider);
         }
 
@@ -52,26 +52,26 @@ namespace Mvc.Client.Controllers
 			}
 
 			// Just to check if local session really is destroyed
-			
+
 		    return Redirect("/");
-            
+
         }
 
         [HttpPost("~/signout"), HttpGet("~/signout")]
         public IActionResult SignOut()
         {
-            // Initiate remote logout procedure on SSO IdP 
-            // RelayState URLs have to be registered with SSO 
+            // Initiate remote logout procedure on SSO IdP
+            // RelayState URLs have to be registered with SSO
             // application to prevent scripted session destruction
 
-            // This instructs the cookies auth middleware to delete the local cookie 
-            // and redirect user agent to external external identity provider 
+            // This instructs the cookies auth middleware to delete the local cookie
+            // and redirect user agent to external external identity provider
 
             HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                   
-            return Redirect("https://sso.demo.notakey.com/sso/saml2/idp/initSLO.php?RelayState=http://" + HttpContext.Request.Host + "/completesignout");
-			
-            // The Controllerbase.SignOut is broken and will not redirect 
+
+            return Redirect("https://sso.demo.notakey.com/sso/saml2/idp/initSLO?RelayState=http://" + HttpContext.Request.Host + "/completesignout");
+
+            // The Controllerbase.SignOut is broken and will not redirect
 			//return SignOut(new AuthenticationProperties { RedirectUri = "/" },
 			//CookieAuthenticationDefaults.AuthenticationScheme );
 
