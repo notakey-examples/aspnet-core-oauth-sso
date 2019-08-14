@@ -1,4 +1,4 @@
-# Notakey SSO Oauth 2.0 example
+# Notakey SSO OAuth 2.0 example
 
 ## Running 
 
